@@ -1,6 +1,9 @@
 package com.techyourchance.multithreading.exercises.exercise3;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,11 +19,13 @@ import androidx.fragment.app.Fragment;
 
 public class Exercise3Fragment extends BaseFragment {
 
-    private static final int SECONDS_TO_COUNT = 3;
+    private static final int SECONDS_TO_COUNT = 5;
 
     public static Fragment newInstance() {
         return new Exercise3Fragment();
     }
+
+    private final Handler mUiHandler = new Handler(Looper.getMainLooper());
 
     private Button mBtnCountSeconds;
     private TextView mTxtCount;
@@ -55,5 +60,43 @@ public class Exercise3Fragment extends BaseFragment {
         3. Show count in TextView
         4. When count completes, show "done" in TextView and enable the button
          */
+        mBtnCountSeconds.setClickable(false);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                long startTimestamp = System.currentTimeMillis();
+                long endTimestamp = startTimestamp + SECONDS_TO_COUNT * 1000;
+
+                int screenCount = 0;
+                while (System.currentTimeMillis() <= endTimestamp){
+
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        return;
+                    }
+
+                    screenCount++;
+                    Log.d("Exercise 3: "," screenCount: "+ screenCount);
+                }
+
+                Log.d("Exercise 3:","Worker Thread name: " + Thread.currentThread().getName());
+
+                final int screenCountFinal = screenCount;
+                mUiHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d("Exercise 3:","Main Thread name: " + Thread.currentThread().getName());
+
+                        mTxtCount.setText("screenCount: " + screenCountFinal);
+                    }
+                });
+
+            }
+        }).start();
+
+        mBtnCountSeconds.setClickable(true);
+
     }
 }

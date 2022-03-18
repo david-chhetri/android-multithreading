@@ -65,4 +65,7 @@ public class Exercise1Fragment extends BaseFragment {
                 "iterations in " + ITERATIONS_COUNTER_DURATION_SEC + "seconds: " + iterationsCount
         );
     }
+
+
+
 }

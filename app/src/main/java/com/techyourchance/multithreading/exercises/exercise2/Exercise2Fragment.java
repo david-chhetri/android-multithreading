@@ -15,13 +15,19 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class Exercise2Fragment extends BaseFragment {
 
     public static Fragment newInstance() {
         return new Exercise2Fragment();
     }
 
+    private final AtomicBoolean mAbort = new AtomicBoolean(false);
+
     private byte[] mDummyData;
+
+
 
     @Nullable
     @Override
@@ -29,6 +35,8 @@ public class Exercise2Fragment extends BaseFragment {
         mDummyData = new byte[50 * 1000 * 1000];
         return inflater.inflate(R.layout.fragment_exercise_2, container, false);
     }
+
+
 
     @Override
     public void onStart() {
@@ -39,6 +47,8 @@ public class Exercise2Fragment extends BaseFragment {
     @Override
     public void onStop() {
         super.onStop();
+        mAbort.set(true);
+        Log.d("Exercise 2","mCountAbort is true");
     }
 
     @Override
@@ -46,7 +56,7 @@ public class Exercise2Fragment extends BaseFragment {
         return "Exercise 2";
     }
 
-    private void countScreenTime() {
+/*    private void countScreenTime() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -62,5 +72,37 @@ public class Exercise2Fragment extends BaseFragment {
                 }
             }
         }).start();
+    }*/
+
+
+
+    private void countScreenTime(){
+        new Thread(new Runnable() {
+            int screenCount = 0;
+            @Override
+            public void run() {
+
+                while(true){
+
+                    try{
+                        Thread.sleep(1000);
+                    }catch (InterruptedException ex){
+                        return;
+                    }
+                    if(mAbort.get()){ return; }
+
+                    screenCount++;
+                    Log.d("Exercise 2","screen time: " + screenCount);
+
+
+                }
+
+
+
+            }
+        }).start();
+
     }
+
+
 }
