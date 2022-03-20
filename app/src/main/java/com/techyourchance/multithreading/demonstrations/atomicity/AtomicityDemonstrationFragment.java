@@ -17,6 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 
 @SuppressLint("SetTextI18n")
 public class AtomicityDemonstrationFragment extends BaseFragment {
@@ -28,12 +30,13 @@ public class AtomicityDemonstrationFragment extends BaseFragment {
         return new AtomicityDemonstrationFragment();
     }
 
-    private Button mBtnStartCount;
     private TextView mTxtFinalCount;
-
+    private Button mBtnStartCount;
+    private volatile AtomicInteger mCount = new AtomicInteger(0);
     private Handler mUiHandler = new Handler(Looper.getMainLooper());
+    private int daveCount=0;
 
-    private volatile int mCount;
+
 
     @Nullable
     @Override
@@ -69,32 +72,51 @@ public class AtomicityDemonstrationFragment extends BaseFragment {
     }
 
     private void startCount() {
-        mCount = 0;
-        mTxtFinalCount.setText("");
-        mBtnStartCount.setEnabled(false);
 
-        for (int i = 0; i < NUM_OF_COUNTER_THREADS; i++) {
-            startCountThread();
-        }
+        //here I am going to span 100 threads
+        //make each thread count upto 1000
+        //display the result while disabling the button
+
+        mCount.set(0);
+        mBtnStartCount.setEnabled(false);
+        mTxtFinalCount.setText("");
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for(int i = 0; i < COUNT_UP_TO; i++){
+                    startCountThread();
+                }
+            }
+        }).start();
 
         mUiHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                mTxtFinalCount.setText(String.valueOf(mCount));
                 mBtnStartCount.setEnabled(true);
+                mTxtFinalCount.setText(String.valueOf(mCount.get()));
+
             }
-        }, NUM_OF_COUNTER_THREADS * 20);
+        }, NUM_OF_COUNTER_THREADS *20);
+
+
+
+
     }
 
     private void startCountThread() {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                for (int i = 0; i < COUNT_UP_TO; i++) {
-                    mCount++;
+                for(int i = 0; i < NUM_OF_COUNTER_THREADS; i++ ){
+                    mCount.getAndIncrement();
                 }
             }
         }).start();
+
+
+
     }
+
 
 }
