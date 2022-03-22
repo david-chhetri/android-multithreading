@@ -63,64 +63,67 @@ public class CustomHandlerDemonstrationFragment extends BaseFragment {
     public void onStop() {
         super.onStop();
         mCustomHandler.stop();
-
     }
 
-    private void sendJob(){
-        //creates a Runnable object and adds to mQueue
+    private void sendJob() {
         mCustomHandler.post(new Runnable() {
             @Override
             public void run() {
-                for(int i=0; i<SECONDS_TO_COUNT;i++) {
+                for (int i=0; i < SECONDS_TO_COUNT; i++) {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         return;
                     }
-                    Log.d("CustomHandler","iteration: " + i);
+                    Log.d("CustomHandler", "iteration: " + i);
                 }
             }
         });
     }
 
-    private class CustomHandler{
+    private class CustomHandler {
+
+        private final Runnable POISON = new Runnable() {
+            @Override
+            public void run() {}
+        };
 
         private final BlockingQueue<Runnable> mQueue = new LinkedBlockingQueue<>();
 
-        public final Runnable POISON = new Runnable() {
-            @Override
-            public void run() {
-            }
-        };
+        public CustomHandler() {
+            initWorkerThread();
+        }
 
-        public CustomHandler(){
+        private void initWorkerThread() {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    Runnable runnable;
-                    while(true){
+                    Log.d("CustomHandler", "worker (looper) thread initialized");
+                    while (true) {
+                        Runnable runnable;
                         try {
                             runnable = mQueue.take();
                         } catch (InterruptedException e) {
                             return;
                         }
-                        if(runnable == POISON){ return; }
+                        if (runnable == POISON) {
+                            Log.d("CustomHandler", "poison data detected; stopping working thread");
+                            return;
+                        }
                         runnable.run();
                     }
                 }
             }).start();
         }
 
-        public void stop(){
+        public void stop() {
+            Log.d("CustomHandler", "injecting poison data into the queue");
             mQueue.clear();
             mQueue.add(POISON);
-            Log.d("CustomHandler: ","Stopped!");
         }
 
-        public void post(Runnable job){
+        public void post(Runnable job) {
             mQueue.add(job);
         }
     }
-
-
 }

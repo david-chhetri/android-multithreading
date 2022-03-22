@@ -64,23 +64,15 @@ public class UiHandlerDemonstrationFragment extends BaseFragment {
                     iterationsCount++;
                 }
 
-                Log.d("Dave OurHandler: ", Thread.currentThread().getName());
-
-                final  int iterationsCountFinal = iterationsCount;
-
-
+                final int iterationsCountFinal = iterationsCount;
 
                 mUiHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d("Dave mUIHandler: ", Thread.currentThread().getName());
-                        mBtnCountIterations.setText("Iterations: "+ iterationsCountFinal);
+                        Log.d("UiHandler", "Current thread: " + Thread.currentThread().getName());
+                        mBtnCountIterations.setText("Iterations: " + iterationsCountFinal);
                     }
                 });
-
-
-
-
             }
         }).start();
     }

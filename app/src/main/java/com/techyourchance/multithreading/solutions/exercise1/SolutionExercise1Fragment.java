@@ -1,8 +1,6 @@
 package com.techyourchance.multithreading.solutions.exercise1;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,8 +17,6 @@ import androidx.fragment.app.Fragment;
 public class SolutionExercise1Fragment extends BaseFragment {
 
     private static final int ITERATIONS_COUNTER_DURATION_SEC = 10;
-
-    private final Handler mUiHandler = new Handler(Looper.getMainLooper());
 
     public static Fragment newInstance() {
         return new SolutionExercise1Fragment();
@@ -61,16 +57,10 @@ public class SolutionExercise1Fragment extends BaseFragment {
                     iterationsCount++;
                 }
 
-                final  int iterationsCountFinal = iterationsCount;
-
-                mUiHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mBtnCountIterations.setText("Iterations: "+ iterationsCountFinal);
-                    }
-                });
-
-
+                Log.d(
+                        "Exercise1",
+                        "iterations in " + ITERATIONS_COUNTER_DURATION_SEC + "seconds: " + iterationsCount
+                );
             }
         }).start();
     }
