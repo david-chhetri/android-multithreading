@@ -23,7 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.fragment.app.Fragment;
-
+//David
 public class Exercise4Fragment extends BaseFragment {
 
     public static Fragment newInstance() {
