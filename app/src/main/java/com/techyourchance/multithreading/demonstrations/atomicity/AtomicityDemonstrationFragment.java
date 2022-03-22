@@ -32,7 +32,7 @@ public class AtomicityDemonstrationFragment extends BaseFragment {
 
     private TextView mTxtFinalCount;
     private Button mBtnStartCount;
-    private volatile AtomicInteger mCount = new AtomicInteger(0);
+    private final AtomicInteger mCount = new AtomicInteger(0);
     private Handler mUiHandler = new Handler(Looper.getMainLooper());
     private int daveCount=0;
 

@@ -3,6 +3,7 @@ package com.techyourchance.multithreading.demonstrations.visibility;
 public class VisibilityDemonstration {
 
     private static int sCount = 0;
+    private final Object LOCK = new Object();
 
     public static void main(String[] args) {
         new Consumer().start();
@@ -19,6 +20,7 @@ public class VisibilityDemonstration {
         public void run() {
             int localValue = -1;
             while (true) {
+
                 if (localValue != sCount) {
                     System.out.println("Consumer: detected count change " + sCount);
                     localValue = sCount;
